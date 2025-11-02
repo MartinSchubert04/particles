@@ -1,0 +1,9 @@
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+#define NUM_MAX_SQUARES 2
+#define GRID_WIDTH 40
+#define GRID_HEIGHT 15
+#define PARTICLE_SIZE 5
+#define SPEED 5
+#define ENERGY_LOSS 0.9
+#define G 9.81
