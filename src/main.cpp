@@ -74,6 +74,12 @@ int main(void) {
 	return 0;
 }
 
+void ClearGrid() {
+	for (int y = 0; y < GRID_HEIGHT; y++)
+		for (int x = 0; x < GRID_WIDTH; x++)
+			grid[y][x].active = false;
+}
+
 void InitEntities() {
 	for (Cell& p : cell) {  // Recorre cada elemento del array
 		p.rec.x = (float)screenWidth / 2;
@@ -85,26 +91,36 @@ void InitEntities() {
 		p.color = RAYWHITE;
 	}
 
+	ClearGrid();
+
 	// Arrancan en 0
-	for (int y = 0; y < GRID_HEIGHT; y++) {
-		for (int x = 0; x < GRID_WIDTH; x++) {
-			grid[y][x].active = GetRandomValue(0, 1);  // inicial random
-		}
-	}
+	// for (int y = 0; y < GRID_HEIGHT; y++) {
+	// 	for (int x = 0; x < GRID_WIDTH; x++) {
+	// 		grid[y][x].active = GetRandomValue(0, 1);  // inicial random
+	// 	}
+	// }
 
 	// PATRONES
 
-	// int midY = GRID_HEIGHT / 2;
-	// int midX = GRID_WIDTH / 2;
-	// grid[midY][midX].active = true;
-	// grid[midY][midX + 1].active = true;
-	// grid[midY + 1][midX].active = true;
-	// grid[midY + 1][midX + 1].active = true;
+	// Gosper Glider Gun (ajustá offsets si se sale del grid)
+	int ox = 20;
+	int oy = 10;
 
-	// grid[midY + 2][midX + 2].active = true;
-	// grid[midY + 2][midX + 3].active = true;
-	// grid[midY + 3][midX + 2].active = true;
-	// grid[midY + 3][midX + 3].active = true;
+	int pattern[][2] = {
+	    {1, 0},
+	    {2, 0},
+	    {0, 1},
+	    {1, 1},
+	    {1, 2},
+	};
+
+	int numCells = sizeof(pattern) / sizeof(pattern[0]);
+	for (int i = 0; i < numCells; i++) {
+		int x = pattern[i][0] + ox;
+		int y = pattern[i][1] + oy;
+		if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT)
+			grid[y][x].active = true;
+	}
 }
 
 void updateGame() {

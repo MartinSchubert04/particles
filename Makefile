@@ -34,3 +34,6 @@ clean:
 # Formatear código con clang-format
 format:
 	clang-format -i $(SRCS) utils.h
+
+run: 
+	./$(TARGET)
