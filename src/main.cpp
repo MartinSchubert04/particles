@@ -1,20 +1,3 @@
-/*******************************************************************************************
- *
- *   raylib [core] example - delta time
- *
- *   Example complexity rating: [★☆☆☆] 1/4
- *
- *   Example originally created with raylib 5.5, last time updated with raylib 5.6-dev
- *
- *   Example contributed by Robin (@RobinsAviary) and reviewed by Ramon Santamaria (@raysan5)
- *
- *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
- *   BSD-like license that allows static linking with closed source software
- *
- *   Copyright (c) 2025 Robin (@RobinsAviary)
- *
- ********************************************************************************************/
-
 #include "../include/raylib.h"
 #include <cstring>
 #include <random>
@@ -23,36 +6,33 @@ void updateFrame();
 void InitEntities();
 void updateGame();
 
-#define NUM_MAX_SQUARES 5
+#define NUM_MAX_SQUARES 2
 
 #define GRID_WIDTH 40
 #define GRID_HEIGHT 15
 #define CELL_SIZE 10
+#define SPEED 5
+#define ENERGY_LOSS 0.9
+#define G 9.81
 
 static const int screenWidth = 800;
 static const int screenHeight = 450;
 
 static const int fontSize = 40;
-static const int fpsTarget = 5;
-
-int generation = 0;
+static const int fpsTarget = 60;
 
 Rectangle getNewRectangle();
 
-typedef struct Cell {
+typedef struct Player {
 	Rectangle rec;
 	Vector2 speed;
+	Vector2 acceleration;
 	Color color;
 	bool active;
-} Cell;
+} Player;
 
-static Cell cell[NUM_MAX_SQUARES] = {0};
+std::vector<Player> players;
 
-static Cell grid[GRID_HEIGHT][GRID_WIDTH] = {0};
-
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
 int main(void) {
 	InitWindow(screenWidth, screenHeight, "Conways's game of life");
 
@@ -67,106 +47,92 @@ int main(void) {
 	}
 
 	// De-Initialization
-	//--------------------------------------------------------------------------------------
 	CloseWindow();  // Close window and OpenGL context
-	//--------------------------------------------------------------------------------------
 
 	return 0;
 }
 
-void ClearGrid() {
-	for (int y = 0; y < GRID_HEIGHT; y++)
-		for (int x = 0; x < GRID_WIDTH; x++)
-			grid[y][x].active = false;
-}
-
 void InitEntities() {
-	for (Cell& p : cell) {  // Recorre cada elemento del array
-		p.rec.x = (float)screenWidth / 2;
-		p.rec.y = (float)screenHeight / 2;
-		p.rec.width = CELL_SIZE;
-		p.rec.height = CELL_SIZE;
-		p.speed.x = 5;
-		p.speed.y = 5;
-		p.color = RAYWHITE;
-	}
-
-	ClearGrid();
-
-	// Arrancan en 0
-	// for (int y = 0; y < GRID_HEIGHT; y++) {
-	// 	for (int x = 0; x < GRID_WIDTH; x++) {
-	// 		grid[y][x].active = GetRandomValue(0, 1);  // inicial random
-	// 	}
+	// for (Player& p : player) {
+	// 	p.rec.x = std::round(((float)screenWidth / 2) + GetRandomValue(-50, 50));
+	// 	p.rec.y = std::round(((float)screenHeight / 2));  //+ GetRandomValue(-50, 50));
+	// 	p.rec.width = CELL_SIZE;
+	// 	p.rec.height = CELL_SIZE;
+	// 	p.speed.x = GetRandomValue(4, 8);
+	// 	p.speed.y = GetRandomValue(4, 8);
+	// 	p.color = RAYWHITE;
 	// }
 
-	// PATRONES
+	// for (int i = 0; i < NUM_MAX_SQUARES; i++) {
+	// 	Player& p = players[i];
 
-	// Gosper Glider Gun (ajustá offsets si se sale del grid)
-	int ox = 20;
-	int oy = 10;
-
-	int pattern[][2] = {
-	    {1, 0},
-	    {2, 0},
-	    {0, 1},
-	    {1, 1},
-	    {1, 2},
-	};
-
-	int numCells = sizeof(pattern) / sizeof(pattern[0]);
-	for (int i = 0; i < numCells; i++) {
-		int x = pattern[i][0] + ox;
-		int y = pattern[i][1] + oy;
-		if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT)
-			grid[y][x].active = true;
-	}
+	// 	p.rec.x = std::round(((float)screenWidth / 2) + GetRandomValue(-50, 50));
+	// 	p.rec.y = std::round(((float)screenHeight / 2));  //+ GetRandomValue(-50, 50));
+	// 	p.rec.width = CELL_SIZE;
+	// 	p.rec.height = CELL_SIZE;
+	// 	i = 0 ? p.speed.x = 8 : p.speed.x = 0;
+	// 	p.speed.y = GetRandomValue(4, 8);
+	// 	p.color = RAYWHITE;
+	// }
 }
 
 void updateGame() {
 	// Player movement
-	// for (Cell& c : cell) {
-	// 	if (IsKeyDown(KEY_RIGHT)) c.rec.x += c.speed.x;
-	// 	if (IsKeyDown(KEY_LEFT)) c.rec.x -= c.speed.x;
-	// 	if (IsKeyDown(KEY_UP)) c.rec.y -= c.speed.y;
-	// 	if (IsKeyDown(KEY_DOWN)) c.rec.y += c.speed.y;
-	// }
-	Cell nextGrid[GRID_HEIGHT][GRID_WIDTH] = {0};
+	float dt = GetFrameTime();
 
-	int offsets[8][2] = {
-	    {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
+	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+		DrawRectangle(GetMouseX(), GetMouseY(), CELL_SIZE, CELL_SIZE, WHITE);
 
-	for (int y = 0; y < GRID_HEIGHT; y++) {
-		for (int x = 0; x < GRID_WIDTH; x++) {
-			int activeAroundCount = 0;
+		players.push_back({{(float)GetMouseX(), (float)GetMouseY(), (float)CELL_SIZE, (float)CELL_SIZE},
+		                   {SPEED, SPEED},
+		                   {0, G},
+		                   WHITE,
+		                   true});
+	}
 
-			for (auto& o : offsets) {
-				int nx = x + o[0];
-				int ny = y + o[1];
-				// controlás los límites o usás módulo
-				// y contás vecinos activos
-				if (nx >= 0 && nx < GRID_WIDTH && ny >= 0 && ny < GRID_HEIGHT) {
-					if (grid[ny][nx].active) activeAroundCount++;
-				}
-			}
+	for (int i = 0; i < players.size(); i++) {
+		Player& p = players[i];
 
-			if (grid[y][x].active) {
-				if (activeAroundCount < 2 || activeAroundCount > 3)
-					nextGrid[y][x].active = false;  // muere
-				else
-					nextGrid[y][x].active = true;  // sigue viva
-			} else {
-				if (activeAroundCount == 3)
-					nextGrid[y][x].active = true;  // nace
-				else
-					nextGrid[y][x].active = false;  // sigue muerta
+		// Mover
+		p.speed.x += p.acceleration.x * dt;
+		p.speed.y += p.acceleration.y * dt;
+
+		p.speed.x *= 0.99f;  // 1.0 = sin fricción, 0.9 = mucha fricción
+		p.speed.y *= 0.99f;
+
+		p.rec.x += p.speed.x;
+		p.rec.y += p.speed.y;
+
+		// Rebote con bordes + corrección de posición
+		if (p.rec.x < 0) {
+			p.rec.x = 0;
+			p.speed.x *= -ENERGY_LOSS;
+		}
+		if (p.rec.x + p.rec.width > screenWidth) {
+			p.rec.x = screenWidth - p.rec.width;
+			p.speed.x *= -ENERGY_LOSS;
+		}
+
+		if (p.rec.y < 0) {
+			p.rec.y = 0;
+			p.speed.y *= -ENERGY_LOSS;
+		}
+		if (p.rec.y + p.rec.height > screenHeight) {
+			p.rec.y = screenHeight - p.rec.height;
+			p.speed.y *= -ENERGY_LOSS;
+		}
+
+		// Colisiones entre cuadrados
+		for (int j = i + 1; j < players.size(); j++) {
+			Player& b = players[j];
+
+			if (CheckCollisionRecs(p.rec, b.rec)) {
+				float temp = p.speed.x;
+				p.speed.x = b.speed.x;
+				b.speed.x = temp;
 			}
 		}
 	}
-
-	memcpy(grid, nextGrid, sizeof(grid));
-
-	generation += 1;
 }
 
 void updateDraw() {
@@ -177,15 +143,15 @@ void updateDraw() {
 	int offsetY = (screenHeight / 2) - (GRID_HEIGHT * CELL_SIZE / 2);
 	int offsetX = (screenWidth / 2) - (GRID_WIDTH * CELL_SIZE / 2);
 
-	for (int y = 0; y < GRID_HEIGHT; y++) {
-		for (int x = 0; x < GRID_WIDTH; x++) {
-			Color color = grid[y][x].active ? RAYWHITE : BLACK;
-			DrawRectangle((x * CELL_SIZE) + offsetX, (y * CELL_SIZE) + offsetY, CELL_SIZE, CELL_SIZE, color);
+	for (int i = 0; i < players.size(); i++) {
+		if (i < players.size()) {
+			// Color color = grid[y][x].active ? RAYWHITE : BLACK;
+			DrawCircle((players[i].rec.x), (players[i].rec.y), (float)CELL_SIZE / 2, WHITE);
 		}
 	}
 
 	DrawText(TextFormat("FPS: %i", GetFPS()), 0, screenHeight - fontSize, fontSize, Fade(WHITE, 0.2));
-	DrawText(TextFormat("Gen: %i", generation), 0, 0, fontSize, Fade(WHITE, 0.2));
+	DrawText(TextFormat("Ball count: %i", players.size()), 0, 0, fontSize, Fade(WHITE, 0.2));
 
 	EndDrawing();
 }

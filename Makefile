@@ -27,6 +27,9 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+run: $(TARGET)
+	./$(TARGET)
+
 # Limpiar archivos generados
 clean:
 	rm -f $(OBJS) $(TARGET)
@@ -35,5 +38,3 @@ clean:
 format:
 	clang-format -i $(SRCS) utils.h
 
-run: 
-	./$(TARGET)
