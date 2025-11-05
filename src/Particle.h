@@ -29,7 +29,7 @@ class Particle {
 		  color(color),
 		  mass(mass),
 		  active(active) {
-		this->radius = mass * 5;
+		this->radius = mass * 3;
 	}
 
 	void applyForce(Vector2 force, float dt) {
