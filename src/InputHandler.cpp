@@ -3,7 +3,7 @@
 #include "Particle.h"
 
 void checkInputs(std::vector<Particle>& particles, float dt) {
-	int particleSize = GetRandomValue(1, 3);
+	int particleSize = GetRandomValue(1, 2);
 
 	if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
 		particles.push_back({{(float)GetMouseX(), (float)GetMouseY()},
@@ -29,10 +29,10 @@ void checkInputs(std::vector<Particle>& particles, float dt) {
 			if (distance < mouseCircleRadius && distance > 1.0f) {
 				// Normalizamos la dirección
 				Vector2 direction = Vector2Normalize(dir);
-				DrawLineV(p.pos, Vector2Add(p.pos, Vector2Scale(direction, 20)), RED);
+				DrawLineV(p.pos, Vector2Add(p.pos, Vector2Scale(direction, 40)), RED);
 
 				// Magnitud de la fuerza: más cerca, más fuerte
-				float strength = 60000.0f / (distance * distance);
+				float strength = 60000.0f;
 
 				// Aplicamos fuerza hacia el mouse
 				Vector2 force = Vector2Scale(direction, strength);
