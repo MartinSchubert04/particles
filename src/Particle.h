@@ -58,8 +58,8 @@ class Particle {
 			speed.x *= -ENERGY_LOSS;
 		}
 
-		if (pos.y < 0) {
-			pos.y = 0;
+		if (pos.y - radius < 0) {
+			pos.y = 0 + radius;
 			speed.y *= -ENERGY_LOSS;
 		}
 		if (pos.y + radius > SCREEN_HEIGHT) {
@@ -74,7 +74,7 @@ class Particle {
 			if (distance < minDistance) {
 				auto normal = Vector2Normalize(Vector2Subtract(other.pos, this->pos));
 				auto relativeVel = Vector2Subtract(other.speed, this->speed);
-				auto impulse = Vector2Scale(normal, 2 * Vector2DotProduct(relativeVel, normal) / 2);
+				auto impulse = Vector2Scale(normal, 2 * Vector2DotProduct(relativeVel, normal) / (this->mass + other.mass));
 
 				auto repulsion = Vector2Scale(normal, minDistance - distance);
 

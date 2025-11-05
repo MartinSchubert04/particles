@@ -3,7 +3,7 @@
 #include "Particle.h"
 
 void checkInputs(std::vector<Particle>& particles, float dt) {
-	int particleSize = GetRandomValue(1, 2);
+	int particleSize = GetRandomValue(2, 3);
 
 	if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
 		particles.push_back({{(float)GetMouseX(), (float)GetMouseY()},
