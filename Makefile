@@ -27,7 +27,9 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-run: $(TARGET)
+run:
+	rm -f $(OBJS) $(TARGET)
+	$(MAKE) $(TARGET)
 	./$(TARGET)
 
 # Limpiar archivos generados

@@ -1,0 +1,15 @@
+BasedOnStyle: Google # o LLVM, si preferís algo más neutro
+IndentWidth: 4        # Tamaño visual del tab (no importa mucho si usás tab real)
+UseTab: Always         # <--- usa tab reales en lugar de espacios
+TabWidth: 4            # Ancho visual del tab
+ContinuationIndentWidth: 4  # Cuánto indentar cuando la línea se corta
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortLambdasOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+ColumnLimit: 0         # No corta líneas largas automáticamente
+IndentCaseLabels: true # Indenta los case dentro de switch
+BreakBeforeBraces: Attach # Llaves en la misma línea del if/for

@@ -1,30 +1,50 @@
-#include "../include/raylib.h"
-#include <vector>
+#pragma once
+
 #include <cmath>
-#include "config.h"
+#include <vector>
+
+#include "../include/raylib.h"
 #include "../include/raymath.h"
+#include "config.h"
 
 class Particle {
+   private:
+	float maxSpeed = 3.0f;
+
    public:
 	Vector2 pos;
 	int radius;
 	Vector2 speed;
 	Vector2 acceleration;
+	float mass;
 	Color color;
+
 	bool active;
 
-	Particle(Vector2 pos, int radius, Vector2 speed, Vector2 acceleration, Color color, bool active)
-	    : pos(pos), radius(radius), speed(speed), acceleration(acceleration), color(color), active(active) {}
+	Particle(Vector2 pos, Vector2 speed, Vector2 acceleration,
+			 Color color, float mass, bool active)
+		: pos(pos),
+		  speed(speed),
+		  acceleration(acceleration),
+		  color(color),
+		  mass(mass),
+		  active(active) {
+		this->radius = mass * 5;
+	}
 
-	void draw() {
-		DrawCircle(pos.x, pos.y, radius, color);
+	void applyForce(Vector2 force, float dt) {
+		speed += Vector2Scale(force, dt);
+
+		if (Vector2Length(speed) > maxSpeed)
+			speed = Vector2Scale(Vector2Normalize(speed), maxSpeed);
 	}
 
 	void update(float dt) {
-		speed.x += acceleration.x * dt;
-		speed.y += acceleration.y * dt;
-		pos.x += speed.x;
-		pos.y += speed.y;
+		pos += speed;
+	}
+
+	void draw() {
+		DrawCircle(pos.x, pos.y, radius, color);
 	}
 
 	void checkCollision(std::vector<Particle>& particles, int index) {
@@ -56,16 +76,17 @@ class Particle {
 			if (distance < minDistance) {
 				auto normal = Vector2Normalize(Vector2Subtract(other.pos, this->pos));
 				auto relativeVel = Vector2Subtract(other.speed, this->speed);
-				auto impulse = Vector2Scale(normal, 2 * Vector2DotProduct(relativeVel, normal) / 2);
+				auto impulse = Vector2Scale(
+					normal, 2 * Vector2DotProduct(relativeVel, normal) / 2);
 
 				auto repulsion = Vector2Scale(normal, minDistance - distance);
 
 				// Intercambiar velocidades simple
-				this->speed += impulse;
-				other.speed -= impulse;
+				this->speed += Vector2Scale(impulse, 1 / mass);
+				other.speed -= Vector2Scale(impulse, 1 / other.mass);
 
-				this->speed -= repulsion;
-				other.speed += repulsion;
+				this->speed -= Vector2Scale(repulsion, 1 / mass);
+				other.speed += Vector2Scale(repulsion, 1 / other.mass);
 			}
 		}
 	}
