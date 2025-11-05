@@ -4,5 +4,9 @@
 #define GRID_WIDTH 40
 #define GRID_HEIGHT 15
 #define SPEED 5
-#define ENERGY_LOSS 0.9
+#define ENERGY_LOSS 0.8
+// #define ENABLE_GRAVITY
+#define GRAVITATIONAL_CONSTANT 6.67430e-11f
+#ifdef ENABLE_GRAVITY
 #define G {0, 9.8}
+#endif

@@ -5,7 +5,7 @@
 void checkInputs(std::vector<Particle>& particles, float dt) {
 	int particleSize = GetRandomValue(2, 3);
 
-	if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 		particles.push_back({{(float)GetMouseX(), (float)GetMouseY()},
 							 {0, 0},
 							 {0, 0},

@@ -59,9 +59,9 @@ void updateGame() {
 	checkInputs(particles, dt);
 
 	for (int i = 0; i < particles.size(); i++) {
-		particles[i].applyForce(G, dt);
+		// particles[i].applyForce(G, dt);
 		particles[i].update(dt);
-		particles[i].checkCollision(particles, i);
+		particles[i].checkCollision(particles, i, dt);
 	}
 }
 

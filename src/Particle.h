@@ -47,7 +47,7 @@ class Particle {
 		DrawCircle(pos.x, pos.y, radius, color);
 	}
 
-	void checkCollision(std::vector<Particle>& particles, int index) {
+	void checkCollision(std::vector<Particle>& particles, int index, float dt) {
 		// Rebote con bordes + corrección de posición
 		if (pos.x - radius < 0) {
 			pos.x = 0 + radius;
@@ -71,8 +71,9 @@ class Particle {
 			Particle& other = particles[j];
 			float distance = Vector2Distance(this->pos, other.pos);
 			float minDistance = radius + other.radius;
+
+			auto normal = Vector2Normalize(Vector2Subtract(other.pos, this->pos));
 			if (distance < minDistance) {
-				auto normal = Vector2Normalize(Vector2Subtract(other.pos, this->pos));
 				auto relativeVel = Vector2Subtract(other.speed, this->speed);
 				auto impulse = Vector2Scale(normal, 2 * Vector2DotProduct(relativeVel, normal) / (this->mass + other.mass));
 
@@ -85,6 +86,13 @@ class Particle {
 				this->speed -= Vector2Scale(repulsion, 1 / mass);
 				other.speed += Vector2Scale(repulsion, 1 / other.mass);
 			}
+			Vector2 dir = Vector2Normalize(Vector2Subtract(other.pos, this->pos));
+			float forceMag = GRAVITATIONAL_CONSTANT * ((this->mass * other.mass) / pow(distance, 2));
+			Vector2 gravity = Vector2Scale(dir, forceMag);
+
+			// Cada una siente la fuerza opuesta
+			this->applyForce(gravity, dt);
+			other.applyForce(Vector2Negate(gravity), dt);
 		}
 	}
 };
