@@ -45,7 +45,7 @@ class Particle {
 	}
 
 	void draw() {
-		DrawSphere(pos, radius, color);
+		DrawSphereWires(pos, radius, 10, 10, color);
 	}
 
 	void checkCollision(std::vector<Particle>& particles, Cube boundary, int index) {
@@ -85,21 +85,25 @@ class Particle {
 
 			if (distance < this->radius + other.radius) {
 				auto overlap = distance - (this->radius + other.radius);
-
 				auto normal = Vector3Normalize(Vector3Subtract(other.pos, this->pos));
-				auto relativeVel = Vector3Subtract(other.speed, this->speed);
-				auto impulse = Vector3Scale(normal, Vector3DotProduct(relativeVel, normal) / (this->mass + other.mass));
-
-				auto repulsion = Vector3Scale(normal, minDistance - distance);
-
-				// Intercambiar velocidades simple
-				this->speed += Vector3Scale(impulse, 1 / mass);
-				other.speed -= Vector3Scale(impulse, 1 / other.mass);
 
 				overlap = (this->radius + other.radius) - Vector3Distance(this->pos, other.pos);
 
 				this->pos -= normal * (overlap / 2);
 				other.pos += normal * (overlap / 2);
+
+				auto mSum = this->mass + other.mass;
+				auto relativeVel = Vector3Subtract(other.speed, this->speed);
+				auto num = Vector3DotProduct(relativeVel, impactVector);
+				auto den = mSum * distance * distance;
+				auto deltaVA = impactVector;
+
+				deltaVA = Vector3Scale(deltaVA, 2 * other.mass * num / den);
+				this->speed += deltaVA;
+
+				auto deltaVB = impactVector;
+				deltaVB = Vector3Scale(deltaVB, -2 * this->mass * num / den);
+				other.speed += deltaVB;
 			}
 		}
 	}

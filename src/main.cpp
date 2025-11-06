@@ -60,7 +60,7 @@ int main() {
 void initState() {
 	// Define the camera to look into our 3D world
 	camera = {
-		(Vector3){0.0f, 10.0f, 100.0f},
+		(Vector3){0.0f, 10.0f, 70.0f},
 		(Vector3){0.0f, 0.0f, 0.0f},
 		(Vector3){0.0f, 0.5f, 0.0f},
 		45.0f,

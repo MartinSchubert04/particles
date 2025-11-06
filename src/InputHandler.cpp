@@ -11,11 +11,11 @@ class InputHandler {
 	void mouseInputs(std::vector<Particle>& particles, float dt, Camera3D camera) {
 		float particleSize = 0.5;
 
-		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+		if (IsKeyDown(KEY_SPACE)) {
 			particles.push_back({{0, 0, 0.0f},
 								 {0.3, 0, 0.6},
 								 {0, 0, 0},
-								 WHITE,
+								 VIOLET,
 								 (float)particleSize,
 								 true});
 		}
