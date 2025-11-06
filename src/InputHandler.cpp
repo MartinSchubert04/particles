@@ -16,26 +16,26 @@ void checkInputs(std::vector<Particle>& particles, float dt) {
 
 	if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
 		int mouseCircleRadius = 80;
-		Vector2 mousePos = {(float)GetMouseX(), (float)GetMouseY()};
+		Vector3 mousePos = {(float)GetMouseX(), (float)GetMouseY()};
 
 		DrawCircleLines(mousePos.x, mousePos.y, mouseCircleRadius, GREEN);
 
 		for (int j = 0; j < particles.size(); j++) {
 			Particle& p = particles[j];
 
-			Vector2 dir = Vector2Subtract(mousePos, p.pos);
-			float distance = Vector2Length(dir);
+			Vector3 dir = Vector3Subtract(mousePos, p.pos);
+			float distance = Vector3Length(dir);
 
 			if (distance < mouseCircleRadius && distance > 1.0f) {
 				// Normalizamos la dirección
-				Vector2 direction = Vector2Normalize(dir);
-				DrawLineV(p.pos, Vector2Add(p.pos, Vector2Scale(direction, 40)), RED);
+				Vector3 direction = Vector3Normalize(dir);
+				// DrawLineV(p.pos, Vector3Add(p.pos, Vector3Scale(direction, 40)), RED);
 
 				// Magnitud de la fuerza: más cerca, más fuerte
 				float strength = 60000.0f;
 
 				// Aplicamos fuerza hacia el mouse
-				Vector2 force = Vector2Scale(direction, strength);
+				Vector3 force = Vector3Scale(direction, strength);
 
 				p.applyForce(force, dt);
 			}
