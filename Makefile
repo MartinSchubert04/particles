@@ -29,12 +29,13 @@ src/%.o: src/%.cpp
 
 # Ejecutar el programa (recompila limpio antes)
 run:
+	rm -f $(OBJS) $(TARGET)
 	$(MAKE) $(TARGET)
 	./$(TARGET)
 
 # Limpiar archivos generados
 clean:
-	del /Q $(OBJS) $(TARGET) 2>nul || true
+	rm -f $(OBJS) $(TARGET)
 
 # Formatear código con clang-format
 format:
