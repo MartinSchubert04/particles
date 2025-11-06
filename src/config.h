@@ -5,4 +5,4 @@
 #define GRID_HEIGHT 15
 #define SPEED 5
 #define ENERGY_LOSS 0.9
-#define G {0, 9.8}
+#define GRAVITY {0, -0.9, 0}
