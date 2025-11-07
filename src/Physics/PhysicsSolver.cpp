@@ -20,3 +20,30 @@ void PhysicsSolver::solveGravity(Particle& self, Particle& other) {
 	self.acceleration = Vector3Add(self.acceleration, forceOnThis);
 	other.acceleration = Vector3Add(other.acceleration, forceOnOther);
 }
+
+void PhysicsSolver::solveCollition(Particle& self, Particle& other) {
+	auto impactVector = Vector3Normalize(Vector3Subtract(other.pos, self.pos));
+	auto distance = Vector3Distance(self.pos, other.pos);
+	auto minDistance = self.radius + other.radius;
+
+	if (distance < self.radius + other.radius) {
+		auto normal = Vector3Normalize(Vector3Subtract(other.pos, self.pos));
+		auto overlap = (self.radius + other.radius) - Vector3Distance(self.pos, other.pos);
+
+		self.pos -= normal * (overlap / 2);
+		other.pos += normal * (overlap / 2);
+
+		auto mSum = self.mass + other.mass;
+		auto relativeVel = Vector3Subtract(other.speed, self.speed);
+		auto num = Vector3DotProduct(relativeVel, impactVector);
+		auto den = mSum * distance * distance;
+		auto deltaVA = impactVector;
+
+		deltaVA = Vector3Scale(deltaVA, 2 * other.mass * num / den);
+		self.speed += deltaVA;
+
+		auto deltaVB = impactVector;
+		deltaVB = Vector3Scale(deltaVB, -2 * self.mass * num / den);
+		other.speed += deltaVB;
+	}
+}

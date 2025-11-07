@@ -17,10 +17,12 @@ class Particle {
 	Vector3 acceleration;
 	float mass;
 	Color color;
+	Vector3 lastPos;
+
+	std::vector<Vector3> path;
+	bool active;
 
 	PhysicsSolver physicsSolver;
-
-	bool active;
 
 	Particle(Vector3 pos, Vector3 speed, Vector3 acceleration,
 			 Color color, float radius, bool active)
@@ -40,6 +42,4 @@ class Particle {
 	void draw();
 
 	void checkCollision(std::vector<Particle>* particles, Cube boundary, int index);
-
-	void solveCollition(Particle& other);
 };

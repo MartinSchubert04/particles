@@ -11,14 +11,14 @@ class InputHandler {
 	void mouseInputs(std::vector<Particle>& particles, float dt, Camera3D camera) {
 		float particleSize = GetRandomValue(10, 15);
 
-		if (IsKeyPressed(KEY_SPACE)) {
-			particles.push_back({{(float)GetRandomValue(-100, 100), 0, (float)GetRandomValue(-100, 100)},
-								 {(float)GetRandomValue(-2, 2), 0, (float)GetRandomValue(-2, 2)},
-								 {0, 0, 0},
-								 MAGENTA,
-								 (float)particleSize,
-								 true});
-		}
+		// if (IsKeyPressed(KEY_SPACE)) {
+		// 	particles.push_back({{(float)GetRandomValue(-100, 100), 0, (float)GetRandomValue(-100, 100)},
+		// 						 {(float)GetRandomValue(-2, 2), 0, (float)GetRandomValue(-2, 2)},
+		// 						 {0, 0, 0},
+		// 						 MAGENTA,
+		// 						 (float)particleSize,
+		// 						 true});
+		// }
 
 		if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
 			int mouseCircleRadius = 60;

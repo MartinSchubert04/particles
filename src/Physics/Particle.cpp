@@ -10,13 +10,21 @@ void Particle::applyForce(Vector3 force, float dt) {
 }
 
 void Particle::update(float dt) {
-	speed = Vector3Add(speed, Vector3Scale(acceleration, dt));
-	pos = Vector3Add(pos, Vector3Scale(speed, dt));
-	acceleration = Vector3Zero();  // Reset para el próximo frame
+	lastPos = pos;
+	speed += Vector3Scale(acceleration, dt);
+	pos += Vector3Scale(speed, dt);
+	acceleration = Vector3Zero();
+
+	if (path.empty() || Vector3Distance(path.back(), pos) > 0.5f)
+		path.push_back(pos);
 }
 
 void Particle::draw() {
 	DrawSphereWires(pos, radius, 10, 10, color);
+
+	for (int i = 1; i < path.size(); i++) {
+		DrawLine3D(path[i - 1], path[i], BLUE);
+	}
 }
 
 void Particle::checkCollision(std::vector<Particle>* particles, Cube boundary, int index) {
@@ -52,33 +60,6 @@ void Particle::checkCollision(std::vector<Particle>* particles, Cube boundary, i
 
 		physicsSolver.solveGravity(*this, other);
 
-		solveCollition(other);
-	}
-}
-
-void Particle::solveCollition(Particle& other) {
-	auto impactVector = Vector3Normalize(Vector3Subtract(other.pos, this->pos));
-	auto distance = Vector3Distance(this->pos, other.pos);
-	auto minDistance = this->radius + other.radius;
-
-	if (distance < this->radius + other.radius) {
-		auto normal = Vector3Normalize(Vector3Subtract(other.pos, this->pos));
-		auto overlap = (this->radius + other.radius) - Vector3Distance(this->pos, other.pos);
-
-		this->pos -= normal * (overlap / 2);
-		other.pos += normal * (overlap / 2);
-
-		auto mSum = this->mass + other.mass;
-		auto relativeVel = Vector3Subtract(other.speed, this->speed);
-		auto num = Vector3DotProduct(relativeVel, impactVector);
-		auto den = mSum * distance * distance;
-		auto deltaVA = impactVector;
-
-		deltaVA = Vector3Scale(deltaVA, 2 * other.mass * num / den);
-		this->speed += deltaVA;
-
-		auto deltaVB = impactVector;
-		deltaVB = Vector3Scale(deltaVB, -2 * this->mass * num / den);
-		other.speed += deltaVB;
+		physicsSolver.solveCollition(*this, other);
 	}
 }

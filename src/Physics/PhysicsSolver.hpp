@@ -7,4 +7,5 @@ class PhysicsSolver {
 	PhysicsSolver() {};
 
 	void solveGravity(Particle& self, Particle& other);
+	void solveCollition(Particle& self, Particle& other);
 };

@@ -9,6 +9,7 @@ void updateGame();
 void updateDraw();
 void initState();
 void updateFrame();
+void setOrbit();
 
 const int screenWidth = 1024;
 const int screenHeight = 900;
@@ -79,6 +80,8 @@ void initState() {
 		},
 		(Color){255, 255, 255, 50},
 	};
+
+	setOrbit();
 }
 
 void UpdateGame() {
@@ -105,4 +108,26 @@ void UpdateDraw() {
 void updateFrame() {
 	UpdateGame();
 	UpdateDraw();
+}
+
+void setOrbit() {
+	int range = 10000;
+	Particle p = {{-50, 0, -20},
+				  {(float)GetRandomValue(-2, 2), 0, (float)GetRandomValue(-2, 2)},
+				  {0, 0, 0},
+				  MAGENTA,
+				  3,
+				  true};
+
+	Particle p2 = {{-50, 0, -20},
+				   {(float)GetRandomValue(-2, 2), 0, (float)GetRandomValue(-2, 2)},
+				   {0, 0, 0},
+				   MAGENTA,
+				   3,
+				   true};
+
+	for (int i = 0; i < range; i++) {
+		if p
+			.checkCollision({p, p2}, boundary, int index)
+	}
 }
