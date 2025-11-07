@@ -6,3 +6,4 @@
 #define SPEED 5
 #define ENERGY_LOSS 0.9
 #define GRAVITY {0, -0.9, 0}
+#define G 0.09f

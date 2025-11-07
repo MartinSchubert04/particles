@@ -1,11 +1,9 @@
-#include <algorithm>
-#include <iostream>
+
 #include <vector>
 
-#include "../include/raylib.h"
-#include "Cube.h"
 #include "InputHandler.cpp"
-#include "Particle.h"
+#include "Physics/Cube.hpp"
+#include "Physics/Particle.hpp"
 
 void updateGame();
 void updateDraw();
@@ -23,6 +21,11 @@ static Camera3D camera = {0};
 
 static InputHandler inputHandler;
 
+struct Grid {
+	int width;
+	int height;
+};
+
 int main() {
 	InitWindow(screenWidth, screenHeight, "Raylib 3D Example");
 
@@ -34,8 +37,8 @@ int main() {
 	{
 		// Update camera (optional, for movement)
 		UpdateCamera(&camera, CAMERA_THIRD_PERSON);	 // Example: Free camera controls
-		HideCursor();
-		SetMousePosition(screenWidth / 2, screenHeight / 2);
+		// HideCursor();
+		// SetMousePosition(screenWidth / 2, screenHeight / 2);
 		BeginDrawing();
 
 		ClearBackground(BLACK);
@@ -81,14 +84,14 @@ void initState() {
 void UpdateGame() {
 	float dt = 1.0f / 6.0f;
 
-	inputHandler.check(particles, dt, camera);
+	inputHandler.check(&particles, dt, camera);
 
 	for (unsigned int i; i < particles.size(); i++) {
 		Particle& p = particles[i];
 
-		p.applyForce(GRAVITY, dt);
+		// p.applyForce(GRAVITY, dt);
 		p.update(dt);
-		p.checkCollision(particles, boundary, i);
+		p.checkCollision(&particles, boundary, i);
 	}
 }
 void UpdateDraw() {

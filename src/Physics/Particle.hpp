@@ -1,12 +1,10 @@
 #pragma once
 
-#include <cmath>
 #include <vector>
 
-#include "../include/raylib.h"
-#include "../include/raymath.h"
-#include "Cube.h"
-#include "config.h"
+#include "../config.h"
+#include "Cube.hpp"
+#include "PhysicsSolver.hpp"
 
 class Particle {
    private:
@@ -20,17 +18,19 @@ class Particle {
 	float mass;
 	Color color;
 
+	PhysicsSolver physicsSolver;
+
 	bool active;
 
 	Particle(Vector3 pos, Vector3 speed, Vector3 acceleration,
-			 Color color, float mass, bool active)
+			 Color color, float radius, bool active)
 		: pos(pos),
 		  speed(speed),
 		  acceleration(acceleration),
 		  color(color),
-		  mass(mass),
+		  radius(radius),
 		  active(active) {
-		this->radius = mass * 3;
+		this->mass = radius * 1000;
 	}
 
 	void applyForce(Vector3 force, float dt);
@@ -39,5 +39,7 @@ class Particle {
 
 	void draw();
 
-	void checkCollision(std::vector<Particle>& particles, Cube boundary, int index);
+	void checkCollision(std::vector<Particle>* particles, Cube boundary, int index);
+
+	void solveCollition(Particle& other);
 };

@@ -13,8 +13,8 @@ LDFLAGS = -Llib -lraylib -lopengl32 -lgdi32 -lwinmm -static
 # Directorio de fuentes
 SRC_DIR = src
 
-# Archivos fuente y objetos
-SRC = $(wildcard $(SRC_DIR)/*.cpp)
+# Buscar todos los .cpp de forma recursiva (válido en MSYS2)
+SRC = $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*/*.cpp) $(wildcard $(SRC_DIR)/*/*/*.cpp)
 OBJ = $(SRC:.cpp=.o)
 
 # Regla por defecto
@@ -25,14 +25,14 @@ $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
 # Cómo compilar cada archivo .cpp a .o
-$(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp
+%.o: %.cpp
+	@echo "Compilando $<..."
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Ejecutar el programa (recompila limpio antes)
-run:
-	rm -f $(OBJ) $(TARGET)
-	$(MAKE) $(TARGET)
+run: clean all
 	./$(TARGET)
+	rm -f $(OBJ)
 
 # Limpiar archivos generados
 clean:
