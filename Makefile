@@ -5,38 +5,39 @@ TARGET = main.exe
 CXX = g++
 
 # Flags de compilación
-CXXFLAGS = -Iinclude -std=c++17 -Wall -Wextra
+CXXFLAGS = -Iinclude -std=c++17 -Wall -Wextra -w
 
 # Flags de linkeo (Raylib en Windows)
-LDFLAGS = -Llib -lraylib -lopengl32 -lgdi32 -lwinmm
+LDFLAGS = -Llib -lraylib -lopengl32 -lgdi32 -lwinmm -static 
 
-# Archivos fuente
-SRCS = src/main.cpp
+# Directorio de fuentes
+SRC_DIR = src
 
-# Archivos objeto
-OBJS = src/main.o
+# Archivos fuente y objetos
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ = $(SRC:.cpp=.o)
 
 # Regla por defecto
 all: $(TARGET)
 
 # Cómo generar el ejecutable
-$(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET) $(LDFLAGS)
+$(TARGET): $(OBJ)
+	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
 # Cómo compilar cada archivo .cpp a .o
-src/%.o: src/%.cpp
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Ejecutar el programa (recompila limpio antes)
 run:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
 	$(MAKE) $(TARGET)
 	./$(TARGET)
 
 # Limpiar archivos generados
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
 
 # Formatear código con clang-format
 format:
-	clang-format -i $(SRCS)
+	clang-format -i $(SRC)

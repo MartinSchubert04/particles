@@ -60,7 +60,7 @@ int main() {
 void initState() {
 	// Define the camera to look into our 3D world
 	camera = {
-		(Vector3){0.0f, 10.0f, 70.0f},
+		(Vector3){0.0f, 10.0f, 700.0f},
 		(Vector3){0.0f, 0.0f, 0.0f},
 		(Vector3){0.0f, 0.5f, 0.0f},
 		45.0f,
@@ -70,9 +70,9 @@ void initState() {
 	boundary = {
 		{0, 0, 0},
 		{
-			30,
-			30,
-			30,
+			400,
+			400,
+			400,
 		},
 		(Color){255, 255, 255, 50},
 	};
@@ -95,7 +95,7 @@ void UpdateDraw() {
 	for (Particle& p : particles) {
 		p.draw();
 	}
-	DrawGrid(boundary.size.x, 1.0f);  // Draw a grid for reference
+	DrawGrid(boundary.size.x / 10, 10.0f);	// Draw a grid for reference
 	DrawCube(boundary.position, boundary.size.x, boundary.size.y, boundary.size.z, boundary.color);
 }
 

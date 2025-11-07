@@ -9,22 +9,22 @@ class InputHandler {
 		keyInputs(particles);
 	}
 	void mouseInputs(std::vector<Particle>& particles, float dt, Camera3D camera) {
-		float particleSize = 0.5;
+		float particleSize = GetRandomValue(2, 3);
 
 		if (IsKeyDown(KEY_SPACE)) {
 			particles.push_back({{0, 0, 0.0f},
 								 {0.3, 0, 0.6},
 								 {0, 0, 0},
-								 VIOLET,
+								 MAGENTA,
 								 (float)particleSize,
 								 true});
 		}
 
 		if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
-			int mouseCircleRadius = 80;
-			Vector3 mousePos = {(float)GetMouseX(), (float)GetMouseY()};
+			int mouseCircleRadius = 100;
+			Vector3 mousePos = {camera.target.x, camera.target.y, camera.target.z};
 
-			DrawCircleLines(mousePos.x, mousePos.y, mouseCircleRadius, GREEN);
+			DrawSphereWires({camera.target.x, camera.target.y, camera.target.z}, mouseCircleRadius, 10, 10, GREEN);
 
 			for (int j = 0; j < particles.size(); j++) {
 				Particle& p = particles[j];
